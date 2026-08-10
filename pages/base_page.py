@@ -26,7 +26,7 @@ class BasePage():
             return False
         return True
 
-    #возвращает текст элемента или False в случае нейдачи
+    #возвращает текст элемента или False в случае неудачи
     def is_element_text(self, how, what):
         try:
             textelement = self.browser.find_element(how, what).text
@@ -66,11 +66,14 @@ class BasePage():
 
     def go_to_login_page(self):
         login_link = self.browser.find_element(*BasePageLocators.LOGIN_LINK)
-        login_link.click() 
+        login_link.click()
 
     def should_be_login_link(self):
-        assert self.is_element_present(*BasePageLocators.LOGIN_LINK), "Login link is not presented"
+        assert self.is_element_present(*BasePageLocators.LOGIN_LINK), "Login link is not presented. Didn't find locator 'LOGIN_LINK'"
 
     def go_to_basket(self):
         basket_link = self.browser.find_element(*BasePageLocators.BASKET_LINK)
         basket_link.click()
+
+    def should_be_user_successfully_registered(self):
+        assert self.is_element_present(*BasePageLocators.USER_ICON), "User NOT registered successfully. Didn't find locator 'USER_ICON'"

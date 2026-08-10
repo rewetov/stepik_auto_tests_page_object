@@ -1,16 +1,10 @@
 import pytest
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-
-from pages.basket_page import BasketPage
+from .pages.basket_page import BasketPage
 from .pages.product_page import ProductPage
 from .pages.login_page import LoginPage
+from .pages.main_page import MainPage
 import time
 
-urls = [f"http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer{no}" for no in range(1)]
-
-
-#@pytest.mark.parametrize('link', urls)
 def test_guest_can_add_product_to_basket(browser):
     link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=newYear2019"
     page = ProductPage(browser, link)                       # инициализируем Page Object, передаем в конструктор экземпляр драйвера и url адрес 
@@ -61,3 +55,30 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     basket.should_be_basket_page()
     basket.should_be_basket_is_empty()
     time.sleep(3)
+
+
+class TestUserAddToBasketFromProductPage():
+    @pytest.fixture(autouse=True, scope="function")
+    def setup(self, browser):
+        email = str(time.time()) + "@fakemail.org"
+        link = "https://selenium1py.pythonanywhere.com/ru/accounts/login/"
+        login_page = LoginPage(browser, link)
+        login_page.open()
+        login_page.should_be_login_page()
+        login_page.register_new_user(email, "Rojak0002")
+        login_page.should_be_user_successfully_registered()
+
+    def test_user_cant_see_success_message(self, browser):
+        link = "https://selenium1py.pythonanywhere.com/ru/catalogue/coders-at-work_207/"
+        page = ProductPage(browser, link)
+        page.open()
+        page.should_not_be_success_message()
+
+    def test_user_can_add_product_to_basket(self, browser):
+        link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=newYear2019"
+        page = ProductPage(browser, link)
+        page.open()
+        page.add_product_to_basket()
+        page.solve_quiz_and_get_code()
+        page.book_name_in_message_is_the_same_as_on_the_page()
+        page.price_in_the_basket_message_the_same_as_book_price()
