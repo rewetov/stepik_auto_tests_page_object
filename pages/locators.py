@@ -26,4 +26,3 @@ class BasePageLocators():
 
 class BasketPageLocators():
 	BASKET_IS_EMPTY_TEXT = (By.CSS_SELECTOR, "div#content_inner > p")
-	#BASKET_TITLE = (By.CSS_SELECTOR, ".basket-title")
